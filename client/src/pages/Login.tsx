@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import { loginRoute } from "../utils/APIRoutes";
+import { useUserStore } from "../stores/userStore";
 
 interface LoginFormValues {
   username: string;
@@ -24,9 +25,10 @@ const Login = () => {
     password: "",
   });
   const [loading, setLoading] = useState<boolean>(false);
+  const { setUser, isLoggedIn, setLogIn } = useUserStore();
 
   useEffect(() => {
-    if (localStorage.getItem(import.meta.env.VITE_LOCALHOST_KEY)) {
+    if (isLoggedIn) {
       navigate("/");
     }
   }, []);
@@ -62,10 +64,8 @@ const Login = () => {
       }
       if (data.status === true) {
         toast.success("Login successful");
-        localStorage.setItem(
-          import.meta.env.VITE_LOCALHOST_KEY,
-          JSON.stringify(data.user)
-        );
+        setUser(data.user);
+        setLogIn(true);
         navigate("/");
       }
       setLoading(false);

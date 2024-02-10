@@ -3,6 +3,7 @@ const cors = require("cors");
 const { connectDB } = require("./db/connectDB");
 const authRoutes = require("./routes/auth");
 const messageRoutes = require("./routes/messagesRoutes");
+const Messages = require("./models/messageModel");
 
 const app = express();
 const socket = require("socket.io");
@@ -22,7 +23,7 @@ const server = app.listen(process.env.PORT, () => {
 
 const io = socket(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "*",
   },
 });
 
@@ -33,10 +34,16 @@ io.on("connection", (socket) => {
     onlineUsers.set(userId, socket.id);
   });
 
-  socket.on("send-msg", (data) => {
+  socket.on("send-msg", async (data) => {
     const sendUserSocket = onlineUsers.get(data.to);
     if (sendUserSocket) {
       socket.to(sendUserSocket).emit("msg-recieve", data.message);
     }
+
+    await Messages.create({
+      message: { text: data.message },
+      users: [data.from, data.to],
+      sender: data.from,
+    });
   });
 });

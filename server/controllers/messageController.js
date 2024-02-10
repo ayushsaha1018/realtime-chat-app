@@ -1,6 +1,6 @@
 const Messages = require("../models/messageModel");
 
-module.exports.addMessage = async (req, res, next) => {
+module.exports.addMessage = async (req, res) => {
   try {
     const { from, to, message } = req.body;
     const data = await Messages.create({
@@ -12,11 +12,11 @@ module.exports.addMessage = async (req, res, next) => {
     if (data) return res.json({ msg: "Message added successfully." });
     else return res.json({ msg: "Failed to add message to the database" });
   } catch (ex) {
-    next(ex);
+    return res.json({ status: false, message: "Internal Server Error" });
   }
 };
 
-module.exports.getAllMessages = async (req, res, next) => {
+module.exports.getAllMessages = async (req, res) => {
   try {
     const { from, to } = req.body;
     const messages = await Messages.find({
@@ -34,6 +34,6 @@ module.exports.getAllMessages = async (req, res, next) => {
 
     return res.json(projectedMessages);
   } catch (error) {
-    next(error);
+    return res.json({ status: false, message: "Internal Server Error" });
   }
 };

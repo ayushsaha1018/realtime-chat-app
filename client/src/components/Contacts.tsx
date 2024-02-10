@@ -33,7 +33,7 @@ const Contacts: React.FC<ContactsProps> = ({
             {contacts.map((contact: IContact, index: number) => (
               <div
                 key={index}
-                className={`w-full p-4 flex items-center gap-5 border-b cursor-pointer ${
+                className={`w-full px-4 py-2.5 flex items-center gap-5 border-b cursor-pointer ${
                   currentSelected === index
                     ? "bg-background dark:bg-default-100"
                     : "bg-background/20 dark:bg-default-100/20"
@@ -41,11 +41,11 @@ const Contacts: React.FC<ContactsProps> = ({
                 onClick={() => changeCurrentChat(index, contact)}
               >
                 <Avatar
-                  size="lg"
+                  size="md"
                   color="primary"
                   src={`data:image/svg+xml;base64,${contact?.avatarImage}`}
                 />
-                <h3 className="text-xl">{contact?.username}</h3>
+                <h3 className="text-base">{contact?.username}</h3>
               </div>
             ))}
           </div>
@@ -56,7 +56,7 @@ const Contacts: React.FC<ContactsProps> = ({
                 color="primary"
                 src={`data:image/svg+xml;base64,${currentUser.avatarImage}`}
               />
-              <h3 className="text-xl text-white">{currentUser.username}</h3>
+              <h3 className="text-lg text-white">{currentUser.username}</h3>
             </div>
             <Logout />
           </div>

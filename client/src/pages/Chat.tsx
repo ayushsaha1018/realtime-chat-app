@@ -7,29 +7,20 @@ import Contacts from "../components/Contacts";
 import Welcome from "../components/Welcome";
 import ChatContainer from "../components/ChatContainer";
 import { Socket, io } from "socket.io-client";
-import { IContact, IUser } from "../utils/types";
+import { IContact } from "../utils/types";
+import { useUserStore } from "../stores/userStore";
 
 const Chat = () => {
   const socket = useRef<Socket>();
   const navigate = useNavigate();
   const [contacts, setContacts] = useState<IContact[]>([]);
-  const [currentUser, setCurrentUser] = useState<IUser | undefined>(undefined);
   const [currentChat, setCurrentChat] = useState<IContact | undefined>(
     undefined
   );
+  const { user: currentUser, isLoggedIn } = useUserStore();
 
   useEffect(() => {
-    const setUser = async () => {
-      if (!localStorage.getItem(import.meta.env.VITE_LOCALHOST_KEY))
-        navigate("/login");
-      else
-        setCurrentUser(
-          await JSON.parse(
-            localStorage.getItem(import.meta.env.VITE_LOCALHOST_KEY) ?? "null"
-          )
-        );
-    };
-    setUser();
+    if (!isLoggedIn) navigate("/login");
   }, []);
 
   useEffect(() => {
@@ -62,14 +53,14 @@ const Chat = () => {
         shadow="sm"
       >
         <div className="flex h-full">
-          <div className="h-full w-[30%] border-r ">
+          <div className="h-full w-[25%] border-r ">
             <Contacts
               contacts={contacts}
               setCurrentChat={setCurrentChat}
               currentUser={currentUser}
             />
           </div>
-          <div className="w-[70%]">
+          <div className="w-[75%]">
             {currentChat === undefined ? (
               <Welcome currentUser={currentUser} />
             ) : (

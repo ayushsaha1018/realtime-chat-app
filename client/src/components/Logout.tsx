@@ -3,16 +3,16 @@ import LogoutIcon from "./icons/LogoutIcon";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { logoutRoute } from "../utils/APIRoutes";
+import { useUserStore } from "../stores/userStore";
 
 const Logout = () => {
   const navigate = useNavigate();
+  const { user, setLogIn } = useUserStore();
   const handleClick = async () => {
-    const id = await JSON.parse(
-      localStorage.getItem(import.meta.env.VITE_LOCALHOST_KEY) ?? "null"
-    )._id;
+    const id = user?._id;
     const data = await axios.get(`${logoutRoute}/${id}`);
     if (data.status === 200) {
-      localStorage.clear();
+      setLogIn(false);
       navigate("/login");
     }
   };

@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import { registerRoute } from "../utils/APIRoutes";
+import { useUserStore } from "../stores/userStore";
 
 interface RegisterFormValues {
   username: string;
@@ -28,9 +29,10 @@ const Register = () => {
     confirmPassword: "",
   });
   const [loading, setLoading] = useState<boolean>(false);
+  const { setUser, setLogIn, isLoggedIn } = useUserStore();
 
   useEffect(() => {
-    if (localStorage.getItem(import.meta.env.VITE_LOCALHOST_KEY)) {
+    if (isLoggedIn) {
       navigate("/");
     }
   }, []);
@@ -74,10 +76,8 @@ const Register = () => {
       }
       if (data.status === true) {
         toast.success("Register successful");
-        localStorage.setItem(
-          import.meta.env.VITE_LOCALHOST_KEY,
-          JSON.stringify(data.user)
-        );
+        setUser(data.user);
+        setLogIn(true);
         navigate("/");
       }
       setLoading(false);

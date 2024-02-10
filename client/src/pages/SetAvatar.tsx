@@ -12,6 +12,7 @@ import {
   CardHeader,
   Spinner,
 } from "@nextui-org/react";
+import { useUserStore } from "../stores/userStore";
 export default function SetAvatar() {
   const api = `https://api.multiavatar.com/4645646`;
   const navigate = useNavigate();
@@ -21,10 +22,10 @@ export default function SetAvatar() {
     undefined
   );
   const [avatarLoading, setAvatarLoading] = useState<boolean>(false);
+  const { user, setAvatar, isLoggedIn } = useUserStore();
 
   useEffect(() => {
-    if (!localStorage.getItem(import.meta.env.VITE_LOCALHOST_KEY))
-      navigate("/login");
+    if (!isLoggedIn) navigate("/login");
   }, []);
 
   const setProfilePicture = async () => {
@@ -32,21 +33,12 @@ export default function SetAvatar() {
       toast.error("Please select an avatar");
     } else {
       setAvatarLoading(true);
-      const user = await JSON.parse(
-        localStorage.getItem(import.meta.env.VITE_LOCALHOST_KEY) ?? "null"
-      );
-
-      const { data } = await axios.post(`${setAvatarRoute}/${user._id}`, {
+      const { data } = await axios.post(`${setAvatarRoute}/${user?._id}`, {
         image: avatars[selectedAvatar],
       });
 
       if (data.isSet) {
-        user.isAvatarImageSet = true;
-        user.avatarImage = data.image;
-        localStorage.setItem(
-          import.meta.env.VITE_LOCALHOST_KEY,
-          JSON.stringify(user)
-        );
+        setAvatar(data.image);
         navigate("/");
       } else {
         toast.error("Error setting avatar. Please try again.");

@@ -24,15 +24,9 @@ const ChatContainer = ({ currentChat, currentUser, socket }: any) => {
   }, [currentChat]);
 
   const handleSendMsg = async (msg: string) => {
-    socket.current.emit("send-msg", {
+    await socket.current.emit("send-msg", {
       to: currentChat._id,
       from: currentUser._id,
-      message: msg,
-    });
-
-    await axios.post(sendMessageRoute, {
-      from: currentUser._id,
-      to: currentChat._id,
       message: msg,
     });
 
@@ -56,6 +50,12 @@ const ChatContainer = ({ currentChat, currentUser, socket }: any) => {
 
   useEffect(() => {
     if (scrollRef.current) {
+      scrollRef.current.scrollIntoView();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (scrollRef.current) {
       scrollRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
@@ -72,7 +72,7 @@ const ChatContainer = ({ currentChat, currentUser, socket }: any) => {
             />
             <h3 className="text-xl text-white">{currentChat?.username}</h3>
           </div>
-          <div className="w-full flex flex-col gap-4 py-4 px-4 overflow-y-auto">
+          <div className="w-full flex flex-col gap-2.5 py-4 px-4 overflow-y-auto">
             {messages?.map((msg: IMessage, index: number) => (
               <div
                 key={index}
